@@ -1,12 +1,14 @@
 <?php
 /**
- * Plugin Name: Ken's Mega Menu & Related Links Menu
+ * Plugin Name: Big Voodoo Mega Menu & Related Links Menu
  * Plugin URI: http://www.bigvoodoo.com
- * Description: This Mega Menu is even more Mega than the rest, because it has Ken's name on it! It also includes a Related Links Menu.
+ * Description: TODO
  * Version: 0.1.0
- * Author: Joey Line
- * Author URI: https://github.com/firejdl
-*/
+ * Author: firejdl
+ * Author URI: https://github.com/bigvoodoo
+ * License: GPLv2 or newer
+ * Copyright: Big Voodoo
+ */
 
 if ( ! function_exists( 'add_action' ) ) {
 	echo 'No direct access.';
@@ -18,7 +20,6 @@ if ( ! function_exists( 'add_action' ) ) {
  * shortcodes:
  * @shortcode mega_menu - generates the Mega Menu
  * @shortcode related_links - generates the Related Links menu
- * @author Joey Line
  */
 class Mega_Menu {
 	/**
@@ -110,6 +111,9 @@ class Mega_Menu {
 
 	/**
 	 * Loads the Mega Menu structure from Advanced Custom Fields.
+	 *
+	 * TODO: clean this up. I don't like so many loops/conditionals in one spot
+	 *
 	 * @param string The ACF key to search under
 	 * @param string The post_id that the ACF key is stored under
 	 * @return array The menu structure

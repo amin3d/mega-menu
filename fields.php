@@ -1,7 +1,10 @@
 <?php
 /**
  * Registers the Advanced Custom Fields fields for the Mega Menu
- * @author Joey Line
+ *
+ * TODO: get rid of the requirement on ACF! Use our own options instead.
+ *
+ * @author firejdl
  */
 
 add_action( 'acf/register_fields', 'mega_menu_register_fields' );

@@ -4,7 +4,7 @@
  * Create HTML list of Mega Menu items.
  * @see Walker_Nav_Menu
  * @see Walker
- * @author Joey Line
+ * @author firejdl
  */
 class Walker_Nav_Mega_Menu extends Walker_Nav_Menu {
 	private $num_items = 0;
@@ -146,7 +146,7 @@ class Walker_Nav_Mega_Menu extends Walker_Nav_Menu {
 
 			return '<a'. $attributes .'>' . $args->link_before . apply_filters( 'the_title', $item->post_title, $item->ID ) . $args->link_after . '</a>';
 		} else if ( $item->type == 'shortcode' ) {
-			return do_shortcode( htmlspecialchars_decode( $item->shortcode, ENT_QUOTES) );
+			return do_shortcode( htmlspecialchars_decode( $item->shortcode, ENT_QUOTES ) );
 		} else if ( isset( $item->post_title ) ) {
 			return $item->post_title;
 		} else {
