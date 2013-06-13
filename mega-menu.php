@@ -258,7 +258,7 @@ class Mega_Menu {
 	 * @return array The flattened menu structure
 	 * @see Walker
 	 */
-	private static function flatten_menu_structure( $items ) {
+	private static function flatten_menu_structure( $items, $root = true ) {
 		// we need to check the current page/post in here
 		global $post;
 
@@ -313,13 +313,22 @@ class Mega_Menu {
 				$children = array();
 			}
 
+			if ( $root ) {
+				$first_child = new stdClass;
+				$first_child->ID = mt_rand( 1000, mt_getrandmax() );
+				$first_child->post_parent = $new_item->ID;
+				$first_child->post_title = '<h2>'.$new_item->post_title.'</h2>';
+				$first_child->classes = array( 'header' );
+				array_unshift( $children, $first_child );
+			}
+
 			// merge the existing $new_items array with the current $new_item
 			// and a recursive call to self::flatten_menu_structure for the
 			// children of $new_item
 			$new_items = array_merge(
 				$new_items,
 				array( $new_item ),
-				self::flatten_menu_structure( $children )
+				self::flatten_menu_structure( $children, false )
 			);
 		}
 
