@@ -313,7 +313,7 @@ class Mega_Menu {
 				$children = array();
 			}
 
-			if ( $root ) {
+			if ( $root && ! empty( $children ) ) {
 				$first_child = new stdClass;
 				$first_child->ID = mt_rand( 1000, mt_getrandmax() );
 				$first_child->post_parent = $new_item->ID;
