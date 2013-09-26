@@ -61,7 +61,10 @@ Options:
 * `link_before`: Output text before the link text
 * `link_after`: Output text after the link text
 
-Example: `[mega_menu theme_location="mega" before="<div class='surround'>" after="</div>" link_before="<span>" link_after="</span>"]`
+Example:
+```php
+[mega_menu theme_location="mega" before="<div class='surround'>" after="</div>" link_before="<span>" link_after="</span>"]
+```
 
 **[related_links]**
 
@@ -74,7 +77,10 @@ Options:
 * `link_before`: Output text before the link text
 * `link_after`: Output text after the link text
 
-Example: `[related_links theme_location="mega"]`
+Example: 
+```php
+[related_links theme_location="mega"]
+```
 
 ### Filters
 
@@ -93,7 +99,7 @@ Example:
 
 ```php
 function override_nav_menu_start_el( $output, $item, $depth, $args ) {
-	if($args->menu_type 'mega' && $depth 0) {
+	if($args->menu_type 'mega' && $depth == 0) {
 		// add header
 		$output .= '<h2>' . get_the_title( $item->post_id ) . '</h2>';
 	}
@@ -117,7 +123,7 @@ Example:
 
 ```php
 function override_nav_menu_end_el( $output, $item, $depth, $args ) {
-	if($args->menu_type 'mega' && $depth 0) {
+	if($args->menu_type 'mega' && $depth == 0) {
 		// add footer
 		$footer '<div class="menu_footer">footer for ' . get_the_title( $item->post_id ) . '</div>';
 		$output .= $footer;
