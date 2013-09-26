@@ -1,9 +1,15 @@
-# Big Voodoo Mega Menu & Related Links Menu
-@bigvoodoo, @firejdl
+=== Big Voodoo Mega Menu & Related Links Menu ===
+Contributors: bigvoodoo, firejdl
+Tags: menu, mega menu, admin, shortcode
+Requires at least: 3.5
+Tested up to: 3.6.1
+Stable tag: trunk
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Enhancements to the wp-admin Menu interface that allow for faster, more robust, and easier to edit menus. Also includes a Related Links Menu.
 
-## Description
+== Description ==
 
 This is a plugin for WordPress 3.5+ that enhances the Menu experience in several ways:
 
@@ -13,7 +19,7 @@ This is a plugin for WordPress 3.5+ that enhances the Menu experience in several
 
 License: [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)
 
-### Menu Interface Enhancements
+= Menu Interface Enhancements =
 
 * Adds the ability to add a Shortcode and/or custom HTML to any menu! Now you can display forms, widgets, anything you want inside of a menu.
 * Adds the ability to add a "Column/Section" to any menu, which allows for logical division of menu items and both simpler and stronger styling.
@@ -22,17 +28,17 @@ License: [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)
   * Menus can have an optional header with an optional link.
 * Adds a button to the menu item options to add descendents of page in the WP page hierarchy.
 
-### Requirements
+= Requirements =
 
 * WordPress 3.5+
 * PHP 5.3+
 
-### TODO
+= TODO =
 
 * improve documentation (including this document)
 * i18n/L10n
 
-### Inspirations & Thanks
+= Inspirations & Thanks =
 
 * [Gecka Submenu](https://github.com/Gecka-Apps/Wordpress_Gecka_Submenu)
 * [Add Descendents as Submenu Items](http://wordpress.org/plugins/add-descendants-as-submenu-items)
@@ -40,15 +46,14 @@ License: [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)
 * [/wp-admin/includes/nav-menu.php:`wp_nav_menu_item_link_meta_box()`](http://core.trac.wordpress.org/browser/tags/3.3.1/wp-admin/includes/nav-menu.php#L573)
 * [Big Voodoo Interactive](http://www.bigvoodoo.com) for letting me write and open-source this plugin :)
 
-## Installation
+== Installation ==
 
 1. Install the plugin in WordPress & activate it.
-1. [register](http://codex.wordpress.org/Function_Reference/register_nav_menu) a menu location in your theme.
-1. Setup the menu hierarchy under Appearance -> Menu.
-1. Assign the menu from step 3 to the menu location in step 2.
-1. Use one of the shortcodes to display a menu.
+1. Setup the page hierarchy the way you want it to display
+1. Setup the menu structure under Options -> Mega Menu
+1. Use one of the shortcodes to display a menu
 
-### Shortcodes
+= Shortcodes =
 
 **[mega_menu]**
 
@@ -76,7 +81,7 @@ Options:
 
 Example: `[related_links theme_location="mega"]`
 
-### Filters
+= Filters =
 
 **walker_nav_menu_start_el**
 
@@ -91,16 +96,14 @@ Arguments:
 
 Example:
 
-```php
-function override_nav_menu_start_el( $output, $item, $depth, $args ) {
-	if($args->menu_type 'mega' && $depth 0) {
+`function override_nav_menu_start_el( $output, $item, $depth, $args ) {
+	if($args->menu_type == 'mega' && $depth == 0) {
 		// add header
 		$output .= '<h2>' . get_the_title( $item->post_id ) . '</h2>';
 	}
 	return $output;
 }
-add_filter('walker_nav_menu_start_el', 'override_nav_menu_start_el', 99, 4);
-```
+add_filter('walker_nav_menu_start_el', 'override_nav_menu_start_el', 99, 4);`
 
 **walker_nav_menu_end_el**
 
@@ -115,34 +118,32 @@ Arguments:
 
 Example:
 
-```php
-function override_nav_menu_end_el( $output, $item, $depth, $args ) {
-	if($args->menu_type 'mega' && $depth 0) {
+`function override_nav_menu_end_el( $output, $item, $depth, $args ) {
+	if($args->menu_type == 'mega' && $depth == 0) {
 		// add footer
-		$footer '<div class="menu_footer">footer for ' . get_the_title( $item->post_id ) . '</div>';
+		$footer = '<div class="menu_footer">footer for ' . get_the_title( $item->post_id ) . '</div>';
 		$output .= $footer;
 	}
 	return $output;
 }
-add_filter('walker_nav_menu_end_el', 'override_nav_menu_end_el', 99, 4);
-```
+add_filter('walker_nav_menu_end_el', 'override_nav_menu_end_el', 99, 4);`
 
-## Changelog
+== Changelog ==
 
-### 0.2.0
+= 0.2.0 =
 
 * complete rewrite from the ground up
 
-### 0.1.0
+= 0.1.0 =
 
 * initial release
 
-## Upgrade Notice
+== Upgrade Notice ==
 
-### 0.2.0
+= 0.2.0 =
 
 * complete rewrite from the ground up
 
-### 0.1.0
+= 0.1.0 =
 
 * initial release
