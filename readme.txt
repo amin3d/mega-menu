@@ -1,5 +1,5 @@
 === Big Voodoo Mega Menu & Related Links Menu ===
-Contributors: bigvoodoo, firejdl
+Contributors: bigvoodoo, firejdl, geekmenina
 Tags: menu, mega menu, admin, shortcode
 Requires at least: 3.5
 Tested up to: 3.6.1

@@ -1,5 +1,5 @@
 # Big Voodoo Mega Menu & Related Links Menu
-@bigvoodoo, @firejdl
+[@bigvoodoo](https://github.com/bigvoodoo), [@firejdl](https://github.com/firejdl), [@thatElectricFeel](https://github.com/thatElectricFeel)
 
 Enhancements to the wp-admin Menu interface that allow for faster, more robust, and easier to edit menus. Also includes a Related Links Menu.
 
