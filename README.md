@@ -99,7 +99,7 @@ Example:
 
 ```php
 function override_nav_menu_start_el( $output, $item, $depth, $args ) {
-	if($args->menu_type 'mega' && $depth == 0) {
+	if($args->menu_type == 'mega' && $depth == 0) {
 		// add header
 		$output .= '<h2>' . get_the_title( $item->post_id ) . '</h2>';
 	}
@@ -123,10 +123,9 @@ Example:
 
 ```php
 function override_nav_menu_end_el( $output, $item, $depth, $args ) {
-	if($args->menu_type 'mega' && $depth == 0) {
+	if($args->menu_type == 'mega' && $depth == 0) {
 		// add footer
-		$footer '<div class="menu_footer">footer for ' . get_the_title( $item->post_id ) . '</div>';
-		$output .= $footer;
+		$output .= '<div class="menu_footer">footer for ' . get_the_title( $item->post_id ) . '</div>';
 	}
 	return $output;
 }

@@ -49,9 +49,10 @@ License: [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)
 == Installation ==
 
 1. Install the plugin in WordPress & activate it.
-1. Setup the page hierarchy the way you want it to display
-1. Setup the menu structure under Options -> Mega Menu
-1. Use one of the shortcodes to display a menu
+1. [register](http://codex.wordpress.org/Function_Reference/register_nav_menu) a menu location in your theme.
+1. Setup the menu hierarchy under Appearance -> Menu.
+1. Assign the menu from step 3 to the menu location in step 2.
+1. Use one of the shortcodes to display a menu.
 
 = Shortcodes =
 
@@ -121,8 +122,7 @@ Example:
 `function override_nav_menu_end_el( $output, $item, $depth, $args ) {
 	if($args->menu_type == 'mega' && $depth == 0) {
 		// add footer
-		$footer = '<div class="menu_footer">footer for ' . get_the_title( $item->post_id ) . '</div>';
-		$output .= $footer;
+		$output .= '<div class="menu_footer">footer for ' . get_the_title( $item->post_id ) . '</div>';
 	}
 	return $output;
 }
