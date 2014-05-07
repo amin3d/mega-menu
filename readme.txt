@@ -11,6 +11,8 @@ Enhancements to the wp-admin Menu interface that allow for faster, more robust, 
 
 == Description ==
 
+==== NOTE: We do not currently offer support for this plugin. Use at your own risk. Thank you.
+
 This is a plugin for WordPress 3.5+ that enhances the Menu experience in several ways:
 
 * adds enhancements to the wp-admin Menu interface (see below)
