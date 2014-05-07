@@ -27,7 +27,7 @@ class Walker_Nav_Mega_Menu extends Walker_Nav_Menu {
 	 * @see Walker::start_el()
 	 * @see Walker::walk()
 	 */
-	function start_el( &$output, $item, $depth = 0, $args = array() ) {
+	function start_el( &$output, $item, $depth = 0, $args = array(), $current_object_id = 0 ) {
 		global $post;
 
 		$indent = ( $depth ) ? str_repeat( "\t", $depth ) : '';
@@ -37,7 +37,9 @@ class Walker_Nav_Mega_Menu extends Walker_Nav_Menu {
 		$classes = empty( $item->classes ) ? array() : (array) $item->classes;
 		$classes[] = 'menu-item-depth-' . $depth;
 
-		if( $item->post_id == $post->ID ) {
+		// if this is the currently active page, OR if $depth is 0 and this item is stored as an
+		// active page
+		if( $item->post_id == $post->ID || ( in_array( $item->ID, Mega_Menu::$active_pages ) && $depth == 0 ) ) {
 			$classes[] = 'active';
 		}
 
@@ -49,6 +51,7 @@ class Walker_Nav_Mega_Menu extends Walker_Nav_Menu {
 
 		$output .= $indent . '<li' . $id . $class_names .'>';
 
+		$item_output = '';
 		if ( $item->post_id || isset( $item->url ) ) {
 			if ( $item->post_id ) {
 				$url = get_permalink( $item->post_id );

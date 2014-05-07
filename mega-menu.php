@@ -3,7 +3,7 @@
  * Plugin Name: Big Voodoo Mega Menu & Related Links Menu
  * Plugin URI: https://github.com/bigvoodoo/mega-menu
  * Description: Enhancements to the wp-admin Menu interface that allow for faster, more robust, and easier to edit menus. Also includes a Related Links Menu.
- * Version: 0.2.0
+ * Version: 0.3.0
  * Author: Big Voodoo Interactive
  * Author URI: http://www.bigvoodoo.com
  * License: GPLv2
@@ -29,6 +29,11 @@ class Mega_Menu {
 	public static $table_name = 'mega_menu';
 
 	/**
+	 * Holds the currently active page & all its ancestors
+	 */
+	public static $active_pages = array();
+
+	/**
 	 * holds the menu structure so that both shortcodes can share it if
 	 * necessary
 	 */
@@ -42,10 +47,58 @@ class Mega_Menu {
 		add_shortcode( 'mega_menu', array( &$this, 'mega_menu_shortcode' ) );
 		add_shortcode( 'related_links', array( &$this, 'related_links_shortcode' ) );
 
+		add_filter( 'rewrite_rules_array', array( &$this, 'add_ajax_rewrite_rules' ) );
+		add_action( 'parse_request', array( &$this, 'check_for_mega_menu_ajax' ) );
+
 		// if we're on an admin page, include the admin part of this plugin
 		if( is_admin() ) {
 			require_once dirname( __FILE__ ) . '/mega-menu-admin.php';
 		}
+
+		require_once dirname( __FILE__ ) . '/mega-menu-admin-settings.php';
+	}
+
+	/**
+	 * AJAX action hook to get the mega part of the mega menu.
+	 * NOTE: this is not done with admin-ajax.php so that Contact Form 7, the rewrite and caching
+	 * with W3 Total Cache will all work.
+	 */
+	public function check_for_mega_menu_ajax( $wp ) {
+		parse_str( $wp->matched_query, $query );
+		if( isset( $query['mega_menu_ajax'] ) && $query['mega_menu_ajax'] == 'true' ) {
+			if( !isset( $query['theme_location'] ) || !isset( $query['parent'] ) ) {
+				// need those query vars
+				echo 'Error: bad request.';
+				header('Status: 400 Bad Request');
+				header('HTTP/1.1 400 Bad Request');
+				die();
+			}
+
+			// output some headers
+			$charset = get_bloginfo('charset');
+			header('Content-Type: text/html; charset='.$charset);
+			header('Expires: '.date(DATE_RFC1123, strtotime('+1 hour')));
+			header('Cache-Control: public, must-revalidate, proxy-revalidate');
+			header('Pragma: public');
+
+			// output the shortcode with the given theme_location & parent
+			echo $this->mega_menu_shortcode(array(
+				'theme_location' => $query['theme_location'],
+				'ajax' => $query['parent'],
+			));
+
+			die();
+		}
+	}
+
+	/**
+	 * Adds a rewrite rule for the AJAX request.
+	 */
+	public function add_ajax_rewrite_rules($rules) {
+		$new_rules = array(
+			'^ajax_mega_menu/([^/]+)/([0-9]+)' => 'index.php?mega_menu_ajax=true&theme_location=$matches[1]&parent=$matches[2]',
+		);
+		return array_merge($new_rules, $rules);
 	}
 
 	private function load_menu_items( $menu_id, $override_parent_id = null ) {
@@ -110,6 +163,7 @@ class Mega_Menu {
 				if( !isset( $children_counts[$menu_item->parent_id][$menu_item->object] ) ) {
 					$children_counts[$menu_item->parent_id][$menu_item->object] = 0;
 				}
+
 				$menu_item->classes[] = 'menu-item-' . $menu_item->object . '-' . $children_counts[$menu_item->parent_id][$menu_item->object];
 				$children_counts[$menu_item->parent_id][$menu_item->object]++;
 
@@ -126,7 +180,7 @@ class Mega_Menu {
 	private function generate_menu_html( $ul_id, $menu_items, $depth, $args = array() ) {
 		require_once dirname( __FILE__ ) . '/walker-nav-mega-menu.php';
 		$walker = new Walker_Nav_Mega_Menu;
-		return PHP_EOL.'<ul id="' . $ul_id . '">' . PHP_EOL . $walker->walk( $menu_items, $depth, $args ) . PHP_EOL . '</ul>' . PHP_EOL;
+		return ( $args->mobile_toggle ? '<a href="#" class="mobile-toggle">' . $args->mobile_toggle . '</a>' : '' ) . PHP_EOL . '<ul id="' . $ul_id . '" class="mega-menu-container"' . ( $args->ajax ? ' data-ajax="true" data-theme-location="' . $args->theme_location . '" data-home="' . home_url() . '"' : '' ) . '>' . PHP_EOL . $walker->walk( $menu_items, $depth, $args ) . PHP_EOL . '</ul>' . PHP_EOL;
 	}
 
 	/**
@@ -135,19 +189,74 @@ class Mega_Menu {
 	 * @return string The Mega Menu
 	 */
 	public function mega_menu_shortcode( $atts = array() ) {
+		global $post;
 		$menu_items = $this->init_shortcode( $atts );
 
 		$args = (object) shortcode_atts(
-			array('theme_location' => '', 'before' => '', 'after' => '', 'link_before' => '', 'link_after' => ''),
+			array( 'theme_location' => '', 'before' => '', 'after' => '', 'link_before' => '', 'link_after' => '', 'ajax' => false, 'mobile_toggle' => false ),
 			$atts,
 			'mega_menu'
 		);
 
-		$args->mega_wrapper = PHP_EOL.'<div class="mega-menu">';
-		$args->mega_wrapper_end = '</div>'.PHP_EOL;
+		$args->mega_wrapper = PHP_EOL . '<div class="mega-menu">';
+		$args->mega_wrapper_end = '</div>' . PHP_EOL;
 		$args->menu_type = 'mega';
 
+		// figure out the currently active page & its ancestors
+		$parent_id = null;
+		for( $i = count( $menu_items ) - 1; $i >= 0; $i-- ) {
+			$current = &$menu_items[$i];
+
+			if( $current->post_id == $post->ID ) {
+				$parent_id = $current->parent_id;
+				self::$active_pages[] = $current->ID;
+			} else if( $current->ID == $parent_id ) {
+				if( $current->type == 'menu' ) {
+					self::$active_pages = array();
+					break;
+				}
+
+				$parent_id = $current->parent_id;
+				self::$active_pages[] = $current->ID;
+			}
+
+			if( $parent_id === 0 ) {
+				break;
+			}
+		}
+
+		if( $args->ajax === "true" ) {
+			// only output top-level menu items for AJAX menus
+			$menu_items = self::filter_menu_items( $menu_items, 'parent_id', 0 );
+
+			wp_register_script( 'bvi-mega-menu', plugins_url( 'js/mega-menu.js', __FILE__ ), array( 'jquery' ), false, true );
+			wp_enqueue_script( 'bvi-mega-menu' );
+		} else if( is_numeric( $args->ajax ) && $args->ajax !== false ) {
+			$current_page = self::filter_menu_items( $menu_items, 'ID', $args->ajax );
+			$menu_items = array_merge( $current_page, self::filter_menu_items( $menu_items, 'parent_id', $args->ajax, true ) );
+		}
+
 		return $this->generate_menu_html( 'mega-menu-' . $args->theme_location, $menu_items, 0, $args );
+	}
+
+	/**
+	 * Runs array_filter() on $menu_items with a condition such that if $menu_item->$key == $value,
+	 * the menu item is included.
+	 */
+	private static function filter_menu_items( $menu_items, $key, $value, $children = false ) {
+		$values = array( $value );
+		$menu_items = array_filter( $menu_items, function( $menu_item ) use ( $key, &$values, $children ) {
+			if( in_array( $menu_item->$key, $values ) ) {
+				if( $children ) {
+					$values[] = $menu_item->ID;
+				}
+				return true;
+			} else {
+				return false;
+			}
+		});
+
+		return $menu_items;
 	}
 
 	/**
@@ -157,6 +266,8 @@ class Mega_Menu {
 	 * @return string The Related Links menu
 	 */
 	public function related_links_shortcode( $atts = array() ) {
+		self::$active_pages = array();
+
 		$menu_items = $this->init_shortcode( $atts );
 		$display_menu_items = array();
 
@@ -188,6 +299,19 @@ class Mega_Menu {
 			$display_menu_items = $this->get_menu_items_by_parent_id( $menu_items, 0 );
 		}
 
+		// filters out duplicates
+		$display_menu_items = array_filter( $display_menu_items, function( $display_menu_item ) {
+			static $ids = array();
+			if(in_array($display_menu_item->post_id, $ids)) {
+				return false;
+			} else {
+				$ids[] = $display_menu_item->post_id;
+
+				return true;
+			}
+		});
+
+
 		$args = (object) shortcode_atts(
 			array('theme_location' => '', 'before' => '', 'after' => '', 'link_before' => '', 'link_after' => ''),
 			$atts,
@@ -206,7 +330,7 @@ class Mega_Menu {
 					if( $get_children_of_columns ) {
 						$children = array_merge( $children, $this->get_menu_items_by_parent_id( $menu_items, $menu_item->ID, false ) );
 					}
-				} else if( $menu_item->type != 'menu' ) {
+				} else if( $menu_item->type != 'menu' && $menu_item->type != 'shortcode' ) {
 					$children[] = $menu_item;
 				}
 			}
@@ -218,3 +342,11 @@ class Mega_Menu {
 
 // ooh, it's a shiny new Mega Menu!
 new Mega_Menu;
+
+if(get_option('bvi_mega_menu_css_val') == 1) {
+	add_action( 'wp_enqueue_scripts', function() {
+		// default mm2 styling
+		wp_register_style( 'bvi-mega-menu-default', plugins_url( 'mega-menu-2/css/mega-menu-default.css' ));
+		wp_enqueue_style( 'bvi-mega-menu-default' );
+	});
+}

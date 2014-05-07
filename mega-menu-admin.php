@@ -54,6 +54,10 @@ class Mega_Menu_Admin {
 			`data` longtext NOT NULL
 		);';
 		$wpdb->query($query);
+
+		// flush the rewrite rules so the new rewrite rule defined in
+		// Mega_Menu::add_ajax_rewrite_rules() will take effect
+		flush_rewrite_rules();
 	}
 
 	/**
@@ -67,30 +71,31 @@ class Mega_Menu_Admin {
 	}
 
 	/**
-	 * Adds a metabox for shortcodes and includes our special JS & CSS
+	 * adds a metabox for shortcodes and includes our special JS & CSS
+	 * TODO: documentation
 	 *
 	 * @action admin_head-nav-menus.php
 	 */
 	public function customize_nav_menu_page() {
-		// TODO: add comments
 		wp_register_script( 'nav-menu-column-js', plugins_url( 'js/nav-menu-column.js', __FILE__ ) );
 		wp_register_script( 'nav-menu-menu-js', plugins_url( 'js/nav-menu-menu.js', __FILE__ ) );
 		wp_register_script( 'nav-menu-shortcode-js', plugins_url( 'js/nav-menu-shortcode.js', __FILE__ ) );
-		wp_register_script( 'nav-menu-add-descendants-js', plugins_url( 'js/nav-menu-add-descendants.js', __FILE__ ) );
+		// wp_register_script( 'nav-menu-add-descendants-js', plugins_url( 'js/nav-menu-add-descendants.js', __FILE__ ) );
 		// wp_register_script( 'nav-menu-duplicate-js', plugins_url( 'js/nav-menu-duplicate.js', __FILE__ ) );
 		// wp_register_script( 'nav-menu-collapsing-items-js', plugins_url( 'js/nav-menu-collapsing-items.js', __FILE__ ) );
 
 		wp_enqueue_script( 'nav-menu-column-js' );
 		wp_enqueue_script( 'nav-menu-menu-js' );
 		wp_enqueue_script( 'nav-menu-shortcode-js' );
-		wp_enqueue_script( 'nav-menu-add-descendants-js' );
+		// wp_enqueue_script( 'nav-menu-add-descendants-js' );
 		// wp_enqueue_script( 'nav-menu-duplicate-js' );
 		// wp_enqueue_script( 'nav-menu-collapsing-items-js' );
 
 		wp_register_style( 'nav-menu-shortcode-css', plugins_url( 'css/nav-menu-shortcode.css', __FILE__ ) );
 		wp_register_style( 'nav-menu-buttons-css', plugins_url( 'css/nav-menu-buttons.css', __FILE__ ) );
 		wp_register_style( 'nav-menu-menu-css', plugins_url( 'css/nav-menu-menu.css', __FILE__ ) );
-		wp_register_style( 'nav-menu-collapsing-items-css', plugins_url( 'css/nav-menu-collapsing-items.css', __FILE__ ) );
+		// wp_register_style( 'nav-menu-collapsing-items-css', plugins_url( 'css/nav-menu-collapsing-items.css', __FILE__ ) );
+
 		wp_enqueue_style( 'nav-menu-shortcode-css' );
 		wp_enqueue_style( 'nav-menu-buttons-css' );
 		wp_enqueue_style( 'nav-menu-menu-css' );
@@ -102,7 +107,7 @@ class Mega_Menu_Admin {
 	}
 
 	/**
-	 * Sets up the content for the add shortcode metabox.
+	 * sets up the content for the add shortcode metabox.
 	 */
 	public function shortcode_metabox_content() {
 		global $_nav_menu_placeholder, $nav_menu_selected_id;
@@ -127,7 +132,7 @@ class Mega_Menu_Admin {
 	}
 
 	/**
-	 * Sets up the content for the add column metabox.
+	 * sets up the content for the add column metabox.
 	 */
 	public function column_metabox_content() {
 		global $_nav_menu_placeholder, $nav_menu_selected_id;
@@ -162,7 +167,7 @@ class Mega_Menu_Admin {
 	}
 
 	/**
-	 * Sets up the content for the add menu metabox.
+	 * sets up the content for the add menu metabox.
 	 */
 	public function menu_metabox_content() {
 		global $_nav_menu_placeholder, $nav_menu_selected_id, $nav_menus;
@@ -204,8 +209,10 @@ class Mega_Menu_Admin {
 		<?php
 	}
 
+	/**
+	 * TODO: documentation
+	 */
 	public function get_post_descendants() {
-		// TODO: add comments
 		check_ajax_referer( 'add-menu_item', 'menu-settings-column-nonce' );
 
 		if ( ! current_user_can( 'edit_theme_options' ) )
@@ -267,8 +274,10 @@ class Mega_Menu_Admin {
 		}
 	}
 
+	/**
+	 * TODO: documentation
+	 */
 	public function duplicate_item() {
-		// TODO: add comments
 		check_ajax_referer( 'add-menu_item', 'menu-settings-column-nonce' );
 
 		if ( ! current_user_can( 'edit_theme_options' ) )
@@ -326,7 +335,7 @@ class Mega_Menu_Admin {
 	}
 
 	/**
-	 * Save the nav menu structure to our special table. This...sucks.
+	 * save the nav menu structure to our special table. this...sucks.
 	 * @param int the id of the menu that we're updating
 	 * @param mixed this is stupid.
 	 */
@@ -346,12 +355,17 @@ class Mega_Menu_Admin {
 		}
 	}
 
+	/**
+	 * TODO: documentation
+	 */
 	public function update_nav_menu_item( $menu_id, $menu_item_db_id, $menu_item ) {
 		if( $menu_item['post_status'] != 'draft' ) {
 			$item = array();
 			$item['ID'] = $menu_item['menu-item-db-id'];
 			$item['menu_id'] = $menu_id;
-			$item['post_id'] = (int) $menu_item['menu-item-object-id'];
+			if($menu_item['menu-item-object'] == 'page' || $menu_item['menu-item-object'] == 'post'){
+				$item['post_id'] = (int) $menu_item['menu-item-object-id'];
+			}
 			$item['parent_id'] = (int) $menu_item['menu-item-parent-id'];
 			$item['position'] = (int) $menu_item['menu-item-position'];
 

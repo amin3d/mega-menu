@@ -49,9 +49,10 @@ License: [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)
 == Installation ==
 
 1. Install the plugin in WordPress & activate it.
-1. Setup the page hierarchy the way you want it to display
-1. Setup the menu structure under Options -> Mega Menu
-1. Use one of the shortcodes to display a menu
+1. [register](http://codex.wordpress.org/Function_Reference/register_nav_menu) a menu location in your theme.
+1. Setup the menu hierarchy under Appearance -> Menu.
+1. Assign the menu from step 3 to the menu location in step 2.
+1. Use one of the shortcodes to display a menu.
 
 = Shortcodes =
 
@@ -65,6 +66,7 @@ Options:
 * `after`: Output text after the `</a>` of the link
 * `link_before`: Output text before the link text
 * `link_after`: Output text after the link text
+* `ajax`: if "true", loads the Mega part of the menu via AJAX.
 
 Example: `[mega_menu theme_location="mega" before="<div class='surround'>" after="</div>" link_before="<span>" link_after="</span>"]`
 
@@ -97,13 +99,13 @@ Arguments:
 Example:
 
 `function override_nav_menu_start_el( $output, $item, $depth, $args ) {
-	if($args->menu_type == 'mega' && $depth == 0) {
+	if( $args->menu_type == 'mega' && $depth == 0 && $args->ajax !== "true" ) {
 		// add header
 		$output .= '<h2>' . get_the_title( $item->post_id ) . '</h2>';
 	}
 	return $output;
 }
-add_filter('walker_nav_menu_start_el', 'override_nav_menu_start_el', 99, 4);`
+add_filter( 'walker_nav_menu_start_el', 'override_nav_menu_start_el', 99, 4 );`
 
 **walker_nav_menu_end_el**
 
@@ -119,16 +121,21 @@ Arguments:
 Example:
 
 `function override_nav_menu_end_el( $output, $item, $depth, $args ) {
-	if($args->menu_type == 'mega' && $depth == 0) {
+	if( $args->menu_type == 'mega' && $depth == 0 && $args->ajax !== "true" ) {
 		// add footer
-		$footer = '<div class="menu_footer">footer for ' . get_the_title( $item->post_id ) . '</div>';
-		$output .= $footer;
+		$output .= '<div class="menu_footer">footer for ' . get_the_title( $item->post_id ) . '</div>';
 	}
 	return $output;
 }
-add_filter('walker_nav_menu_end_el', 'override_nav_menu_end_el', 99, 4);`
+add_filter( 'walker_nav_menu_end_el', 'override_nav_menu_end_el', 99, 4 );`
 
 == Changelog ==
+
+= 0.3.0 =
+
+* added options to use some basic default JS & CSS
+* added ability to load Mega part of the menu via AJAX
+* fixed some bugs
 
 = 0.2.0 =
 
@@ -139,6 +146,12 @@ add_filter('walker_nav_menu_end_el', 'override_nav_menu_end_el', 99, 4);`
 * initial release
 
 == Upgrade Notice ==
+
+= 0.3.0 =
+
+* added options to use some basic default JS & CSS
+* added ability to load Mega part of the menu via AJAX
+* fixed some bugs
 
 = 0.2.0 =
 
