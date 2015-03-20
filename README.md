@@ -5,8 +5,6 @@ Enhancements to the wp-admin Menu interface that allow for faster, more robust, 
 
 ## Description
 
-#### NOTE: We do not currently offer support for this plugin. Use at your own risk. Thank you.
-
 This is a plugin for WordPress 3.5+ that enhances the Menu experience in several ways:
 
 * adds enhancements to the wp-admin Menu interface (see below)
@@ -80,7 +78,7 @@ Options:
 * `link_before`: Output text before the link text
 * `link_after`: Output text after the link text
 
-Example: 
+Example:
 ```php
 [related_links theme_location="mega"]
 ```
@@ -137,6 +135,11 @@ add_filter( 'walker_nav_menu_end_el', 'override_nav_menu_end_el', 99, 4 );
 
 ## Changelog
 
+### 0.4.0
+
+* fixed several bugs
+* added simple timeout for moving the mouse into/out of the target
+
 ### 0.3.0
 
 * added options to use some basic default JS & CSS
@@ -152,6 +155,11 @@ add_filter( 'walker_nav_menu_end_el', 'override_nav_menu_end_el', 99, 4 );
 * initial release
 
 ## Upgrade Notice
+
+### 0.4.0
+
+* fixed several bugs
+* added simple timeout for moving the mouse into/out of the target
 
 ### 0.3.0
 

@@ -3,7 +3,7 @@
  * Plugin Name: Big Voodoo Mega Menu & Related Links Menu
  * Plugin URI: https://github.com/bigvoodoo/mega-menu
  * Description: Enhancements to the wp-admin Menu interface that allow for faster, more robust, and easier to edit menus. Also includes a Related Links Menu.
- * Version: 0.3.0
+ * Version: 0.4.0
  * Author: Big Voodoo Interactive
  * Author URI: http://www.bigvoodoo.com
  * License: GPLv2
@@ -82,10 +82,10 @@ class Mega_Menu {
 			header('Pragma: public');
 
 			// output the shortcode with the given theme_location & parent
-			echo $this->mega_menu_shortcode(array(
+			echo $this->mega_menu_shortcode(array_merge($_GET, array(
 				'theme_location' => $query['theme_location'],
 				'ajax' => $query['parent'],
-			));
+			)));
 
 			die();
 		}
@@ -179,8 +179,17 @@ class Mega_Menu {
 
 	private function generate_menu_html( $ul_id, $menu_items, $depth, $args = array() ) {
 		require_once dirname( __FILE__ ) . '/walker-nav-mega-menu.php';
+
+		$data = '';
+		foreach($args as $k => $v) {
+			if($v === '' || $k == 'mega_wrapper' || $k == 'mega_wrapper_end') {
+				continue;
+			}
+			$data .= ' data-'.htmlspecialchars($k).'="'.htmlspecialchars($v === true ? 'true' : $v).'"';
+		}
+
 		$walker = new Walker_Nav_Mega_Menu;
-		return ( $args->mobile_toggle ? '<a href="#" class="mobile-toggle">' . $args->mobile_toggle . '</a>' : '' ) . PHP_EOL . '<ul id="' . $ul_id . '" class="mega-menu-container"' . ( $args->ajax ? ' data-ajax="true" data-theme-location="' . $args->theme_location . '" data-home="' . home_url() . '"' : '' ) . '>' . PHP_EOL . $walker->walk( $menu_items, $depth, $args ) . PHP_EOL . '</ul>' . PHP_EOL;
+		return ( $args->mobile_toggle ? '<a href="#" class="mobile-toggle">' . $args->mobile_toggle . '</a>' : '' ) . PHP_EOL . '<ul id="' . $ul_id . '" class="mega-menu-container"'.$data.' data-home="' . home_url() . '">' . PHP_EOL . $walker->walk( $menu_items, $depth, $args ) . PHP_EOL . '</ul>' . PHP_EOL;
 	}
 
 	/**

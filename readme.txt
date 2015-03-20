@@ -2,7 +2,7 @@
 Contributors: bigvoodoo, firejdl, geekmenina
 Tags: menu, mega menu, admin, shortcode
 Requires at least: 3.5
-Tested up to: 3.6.1
+Tested up to: 4.1.1
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -10,8 +10,6 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Enhancements to the wp-admin Menu interface that allow for faster, more robust, and easier to edit menus. Also includes a Related Links Menu.
 
 == Description ==
-
-**NOTE: We do not currently offer support for this plugin. Use at your own risk. Thank you.**
 
 This is a plugin for WordPress 3.5+ that enhances the Menu experience in several ways:
 
@@ -133,6 +131,11 @@ add_filter( 'walker_nav_menu_end_el', 'override_nav_menu_end_el', 99, 4 );`
 
 == Changelog ==
 
+= 0.4.0 =
+
+* fixed several bugs
+* added simple timeout for moving the mouse into/out of the target
+
 = 0.3.0 =
 
 * added options to use some basic default JS & CSS
@@ -148,6 +151,11 @@ add_filter( 'walker_nav_menu_end_el', 'override_nav_menu_end_el', 99, 4 );`
 * initial release
 
 == Upgrade Notice ==
+
+= 0.4.0 =
+
+* fixed several bugs
+* added simple timeout for moving the mouse into/out of the target
 
 = 0.3.0 =
 

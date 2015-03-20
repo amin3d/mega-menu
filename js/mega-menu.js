@@ -2,23 +2,37 @@ jQuery(function($) {
 	var mobile = $('.mobile-toggle:visible').length == 1;
 	$('.mega-menu-container').each(function() {
 		var container = $(this),
-			theme_location = container.data('theme-location'),
+			theme_location = container.data('theme_location'),
 			home = container.data('home');
+
 		container.find('.menu-item-depth-0').on('mouseover', function() {
+			clearTimeout(this.timeout);
+			if(!$(this).children('.mega-menu:visible').length) {
+				$('.menu-item-depth-0').children('.mega-menu').stop(true, true).hide();
+				this.timeout = setTimeout($.proxy(over, this), 0);
+			}
+		}).on('mouseleave', function() {
+			clearTimeout(this.timeout);
+			this.timeout = setTimeout($.proxy(out, this), 250);
+		});
+
+		var over = function() {
 			if(container.siblings('.mobile-toggle').filter(':visible').length) {
 				return true;
 			}
-			ajax_load_menu($(this), theme_location, home);
+			ajax_load_menu.call($(this), theme_location, home);
 
 			if(!$(this).children('.mega-menu:empty').length)
 				$(this).children('.mega-menu').stop(true, true).slideDown(300);
-		}).on('mouseleave', function(){
+		};
+
+		var out = function() {
 			if(container.siblings('.mobile-toggle').filter(':visible').length) {
 				return true;
 			}
 			if(!$(this).children('.mega-menu:empty').length)
 				$(this).children('.mega-menu').stop(true, true).slideUp(300).fadeOut();
-		});
+		};
 
 		container.siblings('.mobile-toggle').on('click', function(e) {
 			e.preventDefault();
@@ -47,28 +61,30 @@ jQuery(function($) {
 		}
 	});
 
-	var ajax_load_menu = function(el, theme_location, home) {
-		if(el.find('.mega-menu').is(':empty')) {
-			var id = el.attr('id').replace(/[^0-9]+/, ''),
+	var ajax_load_menu = function(theme_location, home) {
+		if(this.find('.mega-menu').is(':empty')) {
+			var id = this.attr('id').replace(/[^0-9]+/, ''),
 				url = '/ajax_mega_menu/' + encodeURIComponent(theme_location) + '/' + id,
-				qs = '';
+				qs = $.extend({}, this.parents('ul.mega-menu-container').data());
+
 			$('script[src]').each(function() {
-				var match = $(this).attr('src').match(/mega-menu.js\?([^"']+)/);
+				var match = $(this).attr('src').match(/mega-menu.js\?([^"']+)=([^"']+)/);
 				if(match)
-					qs = match[1];
+					qs[match[1]] = match[2];
 			});
+
 			$.ajax({
 				async: false,
-				url: home + url + '?' + qs,
+				url: home + url + '?' + $.param(qs),
 				dataType: 'html',
-				success: function(html) {
+				success: $.proxy(function(html) {
 					// make sure CF7 forms have the current URL instead of the AJAX menu url
 					html = html.replace(url, window.location.pathname + window.location.search);
 					// insert the HTML
-					el.find('.mega-menu').replaceWith($($.parseHTML(html)).find('.mega-menu'));
+					this.find('.mega-menu').replaceWith($($.parseHTML(html)).find('.mega-menu'));
 					// initialize the CF7 forms
-					el.find('div.wpcf7 > form').wpcf7InitForm();
-				}
+					this.find('div.wpcf7 > form').wpcf7InitForm();
+				}, this)
 			});
 		}
 	};
