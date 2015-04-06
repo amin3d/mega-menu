@@ -131,6 +131,12 @@ add_filter( 'walker_nav_menu_end_el', 'override_nav_menu_end_el', 99, 4 );`
 
 == Changelog ==
 
+= 0.4.1 =
+
+* Always include custom pages in related links menus
+
+	Custom pages all have a post_id of 0, which will break our check for duplicate pages. Therefore, we should include all custom pages.
+
 = 0.4.0 =
 
 * fixed several bugs
@@ -151,6 +157,12 @@ add_filter( 'walker_nav_menu_end_el', 'override_nav_menu_end_el', 99, 4 );`
 * initial release
 
 == Upgrade Notice ==
+
+= 0.4.1 =
+
+* Always include custom pages in related links menus
+
+	Custom pages all have a post_id of 0, which will break our check for duplicate pages. Therefore, we should include all custom pages.
 
 = 0.4.0 =
 

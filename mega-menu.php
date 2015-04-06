@@ -311,6 +311,11 @@ class Mega_Menu {
 		// filters out duplicates
 		$display_menu_items = array_filter( $display_menu_items, function( $display_menu_item ) {
 			static $ids = array();
+			// always include custom pages - they ALL have a post_id of 0, which
+			// will break the below checks.
+			if($display_menu_item->object == 'custom' && $display_menu_item->post_id == 0) {
+				return true;
+			}
 			if(in_array($display_menu_item->post_id, $ids)) {
 				return false;
 			} else {
@@ -319,7 +324,6 @@ class Mega_Menu {
 				return true;
 			}
 		});
-
 
 		$args = (object) shortcode_atts(
 			array('theme_location' => '', 'before' => '', 'after' => '', 'link_before' => '', 'link_after' => ''),
