@@ -205,15 +205,13 @@ You can enable the default CSS in the WordPress Admin under Settings > BVI Mega 
 ### 3.0.0
 
 * Overhaul all around to make it compatible with WordPress 4.5.3
-** Removed functionality to "clean up" mega menu in the database because it's no longer needed
-** Added logic to apply a unique class to the related links container instead of the same class as the mega menu container (helpful for styling)
-** Added logic to use default JS for the mega menu's hover functionality when AJAX is set to false or disabled
-** Fixed the default CSS to provide styling for the mobile toggle when it's being used
-** Added random int appended to the ID of related links and mega menu so it doesn't make HTML validators angry in case you use a mega menu or related links shortcode twice or more on the same page
-** Fixed issue where multiple parent menu items were appearing as active when a menu item under multiple parents was active; now it chooses the first parent available
-* Added custom links option that you can set per page or post; also the option to override the existing related links or append to it
+* Removed functionality to "clean up" mega menu in the database because it's no longer needed
+* Added logic to apply a unique class to the related links container instead of the same class as the mega menu container (helpful for styling)
+* Added logic to use default JS for the mega menu's hover functionality when AJAX is set to false or disabled
+* Fixed the default CSS to provide styling for the mobile toggle when it's being used
+* Added random int appended to the ID of related links and mega menu so it doesn't make HTML validators angry in case you use a mega menu or related links shortcode twice or more on the same page
+* Fixed issue where multiple parent menu items were appearing as active when a menu item under multiple parents was active; now it chooses the first parent available
 * Added custom mobile menu option to override mobile menu setup by mega menu
-* Added custom menu option that you can set per page or post
 
 ### 0.4.1
 
