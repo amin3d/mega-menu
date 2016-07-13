@@ -2,10 +2,10 @@
 	// TODO: Add comments!
 	// FIXME: finish me!
 	var add_duplicate_button = function() {
-		if( $( this ).find( '.duplicate' ).size() == 0 ) {
+		if($(this).find('.duplicate').size() == 0) {
 			// add the button!
-			var button = $( '<input type="button" name="duplicate" class="button button-primary menu-save duplicate" value="Duplicate" title="This will duplicate all descendants as well" />' )
-				.on( 'click', function() {
+			var button = $('<input type="button" name="duplicate" class="button button-primary menu-save duplicate" value="Duplicate" title="This will duplicate all descendants as well" />')
+				.on('click', function() {
 					wpNavMenu.registerChange();
 
 					var actions_el = $(this).parents('.menu-item-actions');
@@ -23,26 +23,26 @@
 					// 	'depth' $(this).parents('.menu-item').attr('class').replace(/.*menu-item-depth-([0-9]+).*/, "$1")
 					// };
 
-					// $.get( ajaxurl, params, function( menuMarkup ) {
+					// $.get(ajaxurl, params, function(menuMarkup) {
 					// 	$(menuMarkup).hideAdvancedMenuItemFields().insertAfter(button.parents('.menu-item'));
 					// });
 
 					return false;
 				})
-				.appendTo( $( this ).find( '.menu-item-actions' ) );
+				.appendTo($(this).find('.menu-item-actions'));
 		}
 		return false;
 	};
 
-	var find_nav_menu_children = function( parent_id ) {
-		var children = $( 'input.menu-item-data-parent-id[value=' + parent_id + ']' ).parents( '.menu-item' );
+	var find_nav_menu_children = function(parent_id) {
+		var children = $('input.menu-item-data-parent-id[value=' + parent_id + ']').parents('.menu-item');
 		children.each(function() {
-			children = children.add( find_nav_menu_children( $( this ).find( 'input.menu-item-data-db-id' ).val() ) );
+			children = children.add(find_nav_menu_children($(this).find('input.menu-item-data-db-id').val()));
 		});
 
 		return children;
 	};
 
-	$( '.menu-item' ).each( add_duplicate_button );
-	$( '#menu-to-edit' ).on( 'mouseenter', '.menu-item', add_duplicate_button );
+	$('.menu-item').each(add_duplicate_button);
+	$('#menu-to-edit').on('mouseenter', '.menu-item', add_duplicate_button);
 })(jQuery);
